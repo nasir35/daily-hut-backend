@@ -33,7 +33,7 @@ module.exports.getAllProducts = async (req, res, next) => {
       success: true,
       totalProducts,
       data: products,
-      msg: "Products fetched successfully!",
+      message: "Products fetched successfully!",
     });
   } catch (error) {
     console.log(error);
@@ -86,11 +86,14 @@ module.exports.editAProduct = async (req, res, next) => {
       );
       res
         .status(200)
-        .send({ success: true, data: result, msg: "product updated!" });
+        .send({ success: true, data: result, message: "product updated!" });
     } else {
       res
         .status(404)
-        .json({ success: false, msg: "No matched product found to update!" });
+        .json({
+          success: false,
+          message: "No matched product found to update!",
+        });
     }
   } catch (error) {
     console.error("Error Updating product:", error);
@@ -111,17 +114,17 @@ module.exports.deleteAProduct = async (req, res, next) => {
       if (result.deletedCount === 1) {
         res.status(200).json({
           success: true,
-          msg: "Product deleted successfully!",
+          message: "Product deleted successfully!",
           data: result,
         });
       } else {
         res.status(400).json({
           success: false,
-          msg: "something went wrong while trying to delete the product!",
+          message: "something went wrong while trying to delete the product!",
         });
       }
     } else {
-      res.status(404).json({ success: false, msg: "Product not found." });
+      res.status(404).json({ success: false, message: "Product not found." });
     }
   } catch (error) {
     next(error);
@@ -172,7 +175,7 @@ module.exports.searchProducts = async (req, res, next) => {
       success: true,
       totalProducts,
       data: uniqueProducts,
-      msg: "Products fetched successfully!",
+      message: "Products fetched successfully!",
     });
   } catch (error) {
     next(error);

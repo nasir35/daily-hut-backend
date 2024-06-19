@@ -11,7 +11,7 @@ module.exports.getAllBrands = async (req, res, next) => {
     const brands = await BrandsCollection.find({}).toArray();
     res.status(200).json({
       success: true,
-      msg: "Brands fetched successfully",
+      message: "Brands fetched successfully",
       data: brands,
     });
   } catch (error) {
@@ -25,7 +25,7 @@ module.exports.addABrand = async (req, res, next) => {
     const result = await BrandsCollection.insertOne(brand);
     res.status(200).json({
       success: true,
-      msg: "Brand added successfully",
+      message: "Brand added successfully",
       data: result,
     });
   } catch (error) {
@@ -47,7 +47,7 @@ module.exports.editABrand = async (req, res, next) => {
       );
       res.status(200).json({
         success: true,
-        msg: "Brand updated successfully",
+        message: "Brand updated successfully",
         data: result,
       });
     }
@@ -64,11 +64,13 @@ module.exports.deleteABrand = async (req, res, next) => {
     if (result.deletedCount === 1) {
       res.status(200).json({
         success: true,
-        msg: "Brand deleted successfully!",
+        message: "Brand deleted successfully!",
         data: result,
       });
     } else {
-      res.status(400).json({ success: false, msg: "something went wrong!" });
+      res
+        .status(400)
+        .json({ success: false, message: "something went wrong!" });
     }
   } catch (error) {
     next(error);

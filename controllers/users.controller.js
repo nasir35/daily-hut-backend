@@ -26,13 +26,13 @@ module.exports.saveAnUser = async (req, res, next) => {
     if (isUserExist?._id) {
       return res
         .status(200)
-        .json({ success: true, message: "Login success", token });
+        .json({ success: true, message: "Login success", data: token });
     }
 
     await userCollection.insertOne(user);
     return res
       .status(201)
-      .json({ success: true, message: "Registration success", token });
+      .json({ success: true, message: "Registration success", data: token });
   } catch (error) {
     console.error("Error saving user:", error);
     return res

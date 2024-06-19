@@ -11,7 +11,7 @@ module.exports.getAllCategory = async (req, res, next) => {
     const categories = await categoryCollection.find({}).toArray();
     res.status(200).json({
       success: true,
-      msg: "categories fetched successfully",
+      message: "categories fetched successfully",
       data: categories,
     });
   } catch (error) {
@@ -25,7 +25,7 @@ module.exports.addACategory = async (req, res, next) => {
     const result = await categoryCollection.insertOne(category);
     res.status(200).json({
       success: true,
-      msg: "category added successfully",
+      message: "category added successfully",
       data: result,
     });
   } catch (error) {
@@ -47,7 +47,7 @@ module.exports.editACategory = async (req, res, next) => {
       );
       res.status(200).json({
         success: true,
-        msg: "category updated successfully",
+        message: "category updated successfully",
         data: result,
       });
     }
@@ -64,11 +64,13 @@ module.exports.deleteACategory = async (req, res, next) => {
     if (result.deletedCount === 1) {
       res.status(200).json({
         success: true,
-        msg: "category deleted successfully!",
+        message: "category deleted successfully!",
         data: result,
       });
     } else {
-      res.status(400).json({ success: false, msg: "something went wrong!" });
+      res
+        .status(400)
+        .json({ success: false, message: "something went wrong!" });
     }
   } catch (error) {
     next(error);
@@ -84,6 +86,6 @@ module.exports.getSubCategories = async (req, res, next) => {
   } catch (error) {
     res
       .status(400)
-      .send({ success: false, msg: "No category found with this id" });
+      .send({ success: false, message: "No category found with this id" });
   }
 };
