@@ -1,8 +1,8 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 require("dotenv").config();
 
-// const url = process.env.DATABASE_URL;
-const url = process.env.DATABASE_URL_LOCAL;
+const url = process.env.DATABASE_URL;
+// const url = process.env.DATABASE_URL_LOCAL;
 const client = new MongoClient(url, {
   serverApi: {
     version: ServerApiVersion.v1,

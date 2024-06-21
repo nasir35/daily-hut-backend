@@ -40,8 +40,8 @@ module.exports.editABrand = async (req, res, next) => {
     const matchedbrand = await BrandsCollection.findOne({
       _id: new ObjectId(id),
     });
-    if (matchedbrand.length) {
-      const result = await BrandsCollection.patch(
+    if (matchedbrand) {
+      const result = await BrandsCollection.updateOne(
         { _id: new ObjectId(id) },
         { $set: brand }
       );

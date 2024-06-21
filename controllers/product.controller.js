@@ -88,12 +88,10 @@ module.exports.editAProduct = async (req, res, next) => {
         .status(200)
         .send({ success: true, data: result, message: "product updated!" });
     } else {
-      res
-        .status(404)
-        .json({
-          success: false,
-          message: "No matched product found to update!",
-        });
+      res.status(404).json({
+        success: false,
+        message: "No matched product found to update!",
+      });
     }
   } catch (error) {
     console.error("Error Updating product:", error);
@@ -149,7 +147,6 @@ module.exports.searchProducts = async (req, res, next) => {
         ],
       };
     }
-
     // Fetching products based on search criteria
     let products = await findProductsCollection()
       .find(searchFilter)

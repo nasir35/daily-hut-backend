@@ -7,12 +7,32 @@ const findCategoryCollection = () => {
 
 module.exports.getAllCategory = async (req, res, next) => {
   try {
+    let filter = req.query;
+    Object.keys(filter).forEach((key) => {
+      if (key !== "name") delete filter[key];
+    });
     const categoryCollection = findCategoryCollection();
-    const categories = await categoryCollection.find({}).toArray();
+    const categories = await categoryCollection.find(filter).toArray();
     res.status(200).json({
       success: true,
       message: "categories fetched successfully",
       data: categories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports.getCategoryWithId = async (req, res, next) => {
+  try {
+    const categoryCollection = findCategoryCollection();
+    const { id } = req.params;
+    const category = await categoryCollection.findOne({
+      _id: new ObjectId(id),
+    });
+    res.status(200).json({
+      success: true,
+      message: "category fetched successfully",
+      data: category,
     });
   } catch (error) {
     next(error);
@@ -40,10 +60,19 @@ module.exports.editACategory = async (req, res, next) => {
     const matchedCategory = await categoryCollection.findOne({
       _id: new ObjectId(id),
     });
-    if (matchedCategory.length) {
-      const result = await categoryCollection.patch(
+    let newCategory = { ...matchedCategory };
+    newCategory.image_url = category.image_url
+      ? category.image_url
+      : newCategory.image_url;
+    newCategory.subCategories = [
+      ...new Set([...newCategory.subCategories, ...category.subCategories]),
+    ];
+
+    if (matchedCategory) {
+      const result = await categoryCollection.updateOne(
         { _id: new ObjectId(id) },
-        { $set: category }
+        { $set: newCategory },
+        { upsert: true }
       );
       res.status(200).json({
         success: true,
