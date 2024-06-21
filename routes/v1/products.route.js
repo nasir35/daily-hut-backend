@@ -1,5 +1,4 @@
 const express = require("express");
-const { verifyToken } = require("../../middleware/jwtToken");
 const productsController = require("../../controllers/product.controller");
 const verifyObjectId = require("../../middleware/verifyObjectId");
 const verifyAdminOrSupplier = require("../../middleware/verifyAdminOrSupplier");
@@ -10,19 +9,13 @@ router.route("/search-products").get(productsController.searchProducts);
 router
   .route("/")
   .get(productsController.getAllProducts)
-  .post(verifyToken, verifyAdminOrSupplier, productsController.saveAProduct);
+  .post(verifyAdminOrSupplier, productsController.saveAProduct);
 
 router
   .route("/:id")
   .get(verifyObjectId, productsController.getProductById)
-  .patch(
-    verifyToken,
-    verifyAdminOrSupplier,
-    verifyObjectId,
-    productsController.editAProduct
-  )
+  .patch(verifyAdminOrSupplier, verifyObjectId, productsController.editAProduct)
   .delete(
-    verifyToken,
     verifyAdminOrSupplier,
     verifyObjectId,
     productsController.deleteAProduct

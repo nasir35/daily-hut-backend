@@ -52,7 +52,7 @@ module.exports.getUsersCount = async (req, res, next) => {
       await userCollection.find({ role: "supplier" }).toArray()
     ).length;
     const data = { adminsCount, suppliersCount, membersCount };
-    res.status(200).send(data);
+    res.status(200).send({ success: true, data });
   } catch (error) {
     next(error);
   }

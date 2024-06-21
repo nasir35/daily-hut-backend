@@ -7,8 +7,12 @@ const findBrandsCollection = () => {
 
 module.exports.getAllBrands = async (req, res, next) => {
   try {
+    let filter = req.query;
+    Object.keys(filter).forEach((key) => {
+      if (key !== "name") delete filter[key];
+    });
     const BrandsCollection = findBrandsCollection();
-    const brands = await BrandsCollection.find({}).toArray();
+    const brands = await BrandsCollection.find(filter).toArray();
     res.status(200).json({
       success: true,
       message: "Brands fetched successfully",

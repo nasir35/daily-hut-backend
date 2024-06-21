@@ -20,6 +20,9 @@ module.exports.getAllProducts = async (req, res, next) => {
     const skipValue = (currentPage - 1) * pageSize;
 
     queries.limit = parseInt(queries?.limit) || pageSize;
+    if (filters["_id"]) {
+      filters["_id"] = new ObjectId(filters["_id"]);
+    }
     const products = await findProductsCollection()
       .find(filters)
       .limit(queries.limit)
@@ -65,6 +68,9 @@ module.exports.saveAProduct = async (req, res, next) => {
     await getDb("categoryDB")
       .collection("categories")
       .updateOne({ name: category }, { $inc: { itemsCount: 1 } });
+    await getDb("brandsDB")
+      .collection("brandsCollection")
+      .updateOne({ name: brandName }, { $inc: { itemsCount: 1 } });
     res.status(200).send({ success: true, data: result });
   } catch (error) {
     console.error("Error Adding product:", error);
@@ -77,7 +83,7 @@ module.exports.editAProduct = async (req, res, next) => {
     const findProduct = await findProductsCollection().findOne({
       _id: new ObjectId(id),
     });
-    if (findProduct.length) {
+    if (findProduct) {
       const dataToUpdate = req.body;
       const result = await findProductsCollection().updateOne(
         { _id: new ObjectId(id) },
@@ -105,11 +111,21 @@ module.exports.deleteAProduct = async (req, res, next) => {
     const findProduct = await findProductsCollection().findOne({
       _id: new ObjectId(id),
     });
-    if (findProduct.length) {
+    let categoryName;
+    let brandName;
+    if (findProduct) {
+      categoryName = findProduct.category;
+      brandName = findProduct.brand;
       const result = await findProductsCollection().deleteOne({
         _id: new ObjectId(id),
       });
       if (result.deletedCount === 1) {
+        await getDb("categoryDB")
+          .collection("categories")
+          .updateOne({ name: categoryName }, { $inc: { itemsCount: -1 } });
+        await getDb("brandsDB")
+          .collection("brandsCollection")
+          .updateOne({ name: brandName }, { $inc: { itemsCount: -1 } });
         res.status(200).json({
           success: true,
           message: "Product deleted successfully!",
@@ -134,10 +150,9 @@ module.exports.searchProducts = async (req, res, next) => {
     let { search, limit } = req.query;
     limit = parseInt(limit) || 20;
 
-    // Constructing the search filter
     let searchFilter = {};
     if (search) {
-      const searchRegex = new RegExp(search, "i"); // case-insensitive search
+      const searchRegex = new RegExp(search, "i");
       searchFilter = {
         $or: [
           { name: searchRegex },
@@ -147,7 +162,6 @@ module.exports.searchProducts = async (req, res, next) => {
         ],
       };
     }
-    // Fetching products based on search criteria
     let products = await findProductsCollection()
       .find(searchFilter)
       .limit(limit)
@@ -163,7 +177,6 @@ module.exports.searchProducts = async (req, res, next) => {
       }
     }
 
-    // Fetch total number of matching products
     const totalProducts = await findProductsCollection().countDocuments(
       searchFilter
     );
