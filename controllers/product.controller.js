@@ -64,6 +64,7 @@ module.exports.saveAProduct = async (req, res, next) => {
   try {
     const product = req.body;
     const category = req.body.category;
+    const brandName = req.body.brand;
     const result = await findProductsCollection().insertOne(product);
     await getDb("categoryDB")
       .collection("categories")
